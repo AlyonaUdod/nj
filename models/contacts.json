@@ -82,5 +82,11 @@
     "name": "Ben",
     "phone": "+380666666666",
     "email": "vasya@gmail.com"
+  },
+  {
+    "id": "5ac9c683-dde0-4a31-b988-9beda68f7fba",
+    "name": "Kate",
+    "phone": "+93485893458934895",
+    "email": "kate@gmail.com"
   }
 ]

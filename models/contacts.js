@@ -12,7 +12,7 @@ const listContacts = async () => {
   return JSON.parse(data);
 };
 
-const getContactById = async (contactId) => {
+const getContact = async (contactId) => {
   const data = await listContacts();
   return data.find((el) => el.id === contactId) ?? null;
 };
@@ -43,7 +43,7 @@ const updateContact = async (contactId, body) => {
       el.id === contactId ? { ...item, ...body } : el
     );
     await updateContacts(newArr);
-    const newItem = await getContactById(contactId);
+    const newItem = await getContact(contactId);
     return newItem;
   }
   return null;
@@ -51,7 +51,7 @@ const updateContact = async (contactId, body) => {
 
 module.exports = {
   listContacts,
-  getContactById,
+  getContact,
   removeContact,
   addContact,
   updateContact
