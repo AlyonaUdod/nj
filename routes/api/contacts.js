@@ -9,18 +9,12 @@ const { validateBody } = require('../../decorators/validateBody.js');
 const contactAddValidate = validateBody(contactSchema);
 
 
-const {
-  getAllContacts,
-  getContactById,
-  postContact,
-  deleteContact,
-  putContact
-} = require("../../controllers/contacts");
+const contactsController = require("../../controllers/contacts");
 
-router.get("/", getAllContacts);
-router.get("/:contactId", getContactById);
-router.post("/", contactAddValidate, postContact);
-router.delete("/:contactId", deleteContact);
-router.put("/:contactId", isEmptyBody, contactAddValidate, putContact);
+router.get("/", contactsController.getAllContacts);
+router.get("/:contactId", contactsController.getContactById);
+router.post("/", contactAddValidate, contactsController.postContact);
+router.delete("/:contactId", contactsController.deleteContact);
+router.put("/:contactId", isEmptyBody, contactAddValidate, contactsController.putContact);
 
 module.exports = router;
