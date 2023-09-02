@@ -9,12 +9,12 @@ const {
   updateContact
 } = require("../models/contacts");
 
-const getAllContacts = async (req, res, next) => {
+const getAllContacts = async (req, res) => {
   const contacts = await listContacts();
   res.json(contacts);
 };
 
-const getContactById = async (req, res, next) => {
+const getContactById = async (req, res) => {
   const { contactId } = req.params;
   const contactById = await getContact(contactId);
   if (!contactById) {
@@ -23,12 +23,12 @@ const getContactById = async (req, res, next) => {
   res.json(contactById);
 };
 
-const postContact = async (req, res, next) => {
+const postContact = async (req, res) => {
   const newContact = await addContact(req.body);
   res.status(201).json(newContact);
 };
 
-const deleteContact = async (req, res, next) => {
+const deleteContact = async (req, res) => {
   const { contactId } = req.params;
   const removedContact = await removeContact(contactId);
   if (!removedContact) {
@@ -37,13 +37,13 @@ const deleteContact = async (req, res, next) => {
   res.json({ message: "contact deleted" });
 };
 
-const putContact = async (req, res, next) => {
+const putContact = async (req, res) => {
   const { contactId } = req.params;
   const updatedContact = await updateContact(contactId, req.body);
   if (!updatedContact) {
     throw HttpError(404, "Not found");
   }
-  res.status(200).json(updatedContact);
+  res.json(updatedContact);
 };
 
 module.exports = {
