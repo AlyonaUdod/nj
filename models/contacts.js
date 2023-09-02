@@ -49,10 +49,25 @@ const updateContact = async (contactId, body) => {
   return null;
 };
 
+const updateStatusContact = async (contactId, body) => {
+  const data = await listContacts();
+  const item = data.find((el) => el.id === contactId);
+  if (item) {
+    const newArr = data.map((el) =>
+      el.id === contactId ? { ...item, ...body } : el
+    );
+    await updateContacts(newArr);
+    const newItem = await getContact(contactId);
+    return newItem;
+  }
+  return null;
+};
+
 module.exports = {
   listContacts,
   getContact,
   removeContact,
   addContact,
-  updateContact
+  updateContact,
+  updateStatusContact
 };

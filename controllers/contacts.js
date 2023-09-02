@@ -1,22 +1,24 @@
 const HttpError = require("../helpers/HttpError");
 const { ctrlWrapper } = require("../decorators/ctrlWrapper");
+const { Contact } = require('../schemas/contactSchemas');
 
 const {
-  listContacts,
-  getContact,
-  addContact,
+  // listContacts,
+  // getContact,
+  // addContact,
   removeContact,
-  updateContact
+  updateContact,
+  updateStatusContact
 } = require("../models/contacts");
 
 const getAllContacts = async (req, res) => {
-  const contacts = await listContacts();
+  const contacts = await Contact.find({});
   res.json(contacts);
 };
 
 const getContactById = async (req, res) => {
   const { contactId } = req.params;
-  const contactById = await getContact(contactId);
+  const contactById = await Contact.findById(contactId);
   if (!contactById) {
     throw HttpError(404, "Not Found");
   }
@@ -24,13 +26,13 @@ const getContactById = async (req, res) => {
 };
 
 const postContact = async (req, res) => {
-  const newContact = await addContact(req.body);
+  const newContact = await Contact.create(req.body);
   res.status(201).json(newContact);
 };
 
 const deleteContact = async (req, res) => {
   const { contactId } = req.params;
-  const removedContact = await removeContact(contactId);
+  const removedContact = await Contact.findByIdAndRemove(contactId);
   if (!removedContact) {
     throw HttpError(404, "Not Found");
   }
@@ -39,7 +41,17 @@ const deleteContact = async (req, res) => {
 
 const putContact = async (req, res) => {
   const { contactId } = req.params;
-  const updatedContact = await updateContact(contactId, req.body);
+  const updatedContact = await Contact.findByIdAndUpdate(contactId, req.body, { new: true });
+  if (!updatedContact) {
+    throw HttpError(404, "Not found");
+  }
+  res.json(updatedContact);
+};
+
+const patchContact = async (req, res) => {
+  const { contactId } = req.params;
+  const { favorite } = req.body;
+  const updatedContact = await Contact.findByIdAndUpdate(contactId, { favorite }, { new: true });
   if (!updatedContact) {
     throw HttpError(404, "Not found");
   }
@@ -51,5 +63,6 @@ module.exports = {
   getContactById: ctrlWrapper(getContactById),
   postContact: ctrlWrapper(postContact),
   deleteContact: ctrlWrapper(deleteContact),
-  putContact: ctrlWrapper(putContact)
+  putContact: ctrlWrapper(putContact),
+  patchContact: ctrlWrapper(patchContact),
 };
