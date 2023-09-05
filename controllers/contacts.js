@@ -2,15 +2,6 @@ const HttpError = require("../helpers/HttpError");
 const { ctrlWrapper } = require("../decorators/ctrlWrapper");
 const { Contact } = require('../schemas/contactSchemas');
 
-const {
-  // listContacts,
-  // getContact,
-  // addContact,
-  removeContact,
-  updateContact,
-  updateStatusContact
-} = require("../models/contacts");
-
 const getAllContacts = async (req, res) => {
   const contacts = await Contact.find({});
   res.json(contacts);
