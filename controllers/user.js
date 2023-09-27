@@ -24,7 +24,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  const passwordCompare = bcrypt.compareSync(password, user.password);
+  const passwordCompare = user ? bcrypt.compareSync(password, user.password) : null;
   if (!user || !passwordCompare) {
     throw HttpError(401, 'Email or password is wrong')
   };
@@ -46,7 +46,7 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: '' });
-  res.status(204).json();
+  res.sendStatus(204);
 };
 
 const changeSubscription = async (req, res) => {

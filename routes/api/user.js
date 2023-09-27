@@ -13,7 +13,7 @@ const {
 router.get("/current", isTokenValid, userController.getCurrent);
 router.post("/register", validateBody(joiSignupSchema), userController.register);
 router.post("/login", validateBody(joiLoginSchema), userController.login);
-router.get("/logout", isTokenValid, userController.logout);
+router.post("/logout", isTokenValid, userController.logout);
 router.patch(
   "/subscription",
   isTokenValid,
