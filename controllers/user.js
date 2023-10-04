@@ -1,9 +1,14 @@
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
+const path = require('path');
+const fs = require('fs/promises');
+
 const { User } = require('../schemas/userSchemas');
 const HttpError = require("../helpers/HttpError");
 const { ctrlWrapper } = require("../decorators/ctrlWrapper");
+const { jimpsAvatar } = require('../helpers/jimpsAvatar');
 const { SECRET_KEY } = process.env;
 
 const register = async (req, res) => {
@@ -12,7 +17,8 @@ const register = async (req, res) => {
   if (password) {
     hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
   }
-  const result = await User.create({ email, subscription, password: hashPassword });
+  const avatarUrl = gravatar.url(email);
+  const result = await User.create({ email, subscription, password: hashPassword, avatarUrl });
   res.status(201).json({
     user: {
       email,
@@ -29,6 +35,7 @@ const login = async (req, res) => {
     throw HttpError(401, 'Email or password is wrong')
   };
   const { subscription } = user;
+  console.log(user)
   const payload = {
     id: user._id,
   };
@@ -38,7 +45,7 @@ const login = async (req, res) => {
     token,
     user: {
       email,
-      subscription,
+      subscription
     },
   });
 };
@@ -67,10 +74,32 @@ const getCurrent = async (req, res) => {
   });
 };
 
+const updateAvatar = async (req, res) => {
+  const { path: tempUpload, originalname } = req.file;
+  const { _id: id } = req.user;
+  const imageName = `${id}_${originalname}`;
+
+  try {
+    await jimpsAvatar(tempUpload);
+    const resultUpload = path.join(__dirname, '../', 'public', 'avatars', imageName);
+    console.log(resultUpload)
+    await fs.rename(tempUpload, resultUpload);
+    const avatarUrl = path.join('avatars', imageName);
+    await User.findByIdAndUpdate(req.user._id, { avatarUrl });
+    res.json({ avatarUrl });
+  } catch (error) {
+    await fs.unlink(tempUpload);
+    console.log(error);
+    throw error;
+  }
+};
+
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
   changeSubscription: ctrlWrapper(changeSubscription),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };

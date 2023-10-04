@@ -13,6 +13,7 @@ const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 app.use(logger(formatsLogger))
 app.use(cors())
 app.use(express.json())
+app.use(express.static("public"));
 
 app.use('/api/contacts', contactsRouter);
 app.use('/users', userController);
@@ -27,3 +28,6 @@ app.use((err, req, res, next) => {
 })
 
 module.exports = app
+
+
+// http://locahost:3000/avatars/%D0%A4%D0%BE%D1%82%D0%BE0808.jpg
